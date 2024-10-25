@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Mine.16.png</file>
+        <file>Mine.24.png</file>
+        <file>Mine.32.png</file>
+        <file>Mine.48.png</file>
+        <file>Mine.64.png</file>
+        <file>Flag.png</file>
+    </qresource>
+</RCC>
