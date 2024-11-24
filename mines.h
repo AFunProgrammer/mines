@@ -19,11 +19,7 @@ public:
     CMines(QWidget *parent = nullptr);
     ~CMines();
 
-    void resizeEvent(QResizeEvent* event);
-    void orientationChanged(Qt::ScreenOrientation orientation);
 private:
-    CMinefield m_Minefield;
-
     Ui::CMines *ui;
 };
 #endif // CMINES_H
