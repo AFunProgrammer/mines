@@ -36,6 +36,15 @@
           <height>20</height>
          </size>
         </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="pageStep">
+         <number>5</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -49,9 +58,9 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="lblFieldSize">
+       <widget class="QLabel" name="lblCellSize">
         <property name="text">
-         <string>Field Size:</string>
+         <string>Cell Size:</string>
         </property>
        </widget>
       </item>
@@ -206,12 +215,24 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QSlider" name="sldrFieldSize">
+       <widget class="QSlider" name="sldrCellSize">
         <property name="minimumSize">
          <size>
           <width>0</width>
           <height>20</height>
          </size>
+        </property>
+        <property name="minimum">
+         <number>32</number>
+        </property>
+        <property name="maximum">
+         <number>64</number>
+        </property>
+        <property name="singleStep">
+         <number>8</number>
+        </property>
+        <property name="pageStep">
+         <number>16</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
