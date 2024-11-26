@@ -21,9 +21,13 @@ public:
 
 protected:
     void showEvent(QShowEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
-    void setMineSliderSteps();
+    void setSliderSteps();
+    void setCellSizeSlider();
+    void setMinesSlider();
+
     Ui::CMines *ui;
 };
 #endif // CMINES_H
