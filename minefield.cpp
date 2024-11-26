@@ -4,6 +4,8 @@
 
 #include <QtMath>
 
+QPointI offerNewCellSize(uint width, uint height, QPointI* OfferedSize);
+
 CMinefield::CMinefield(QWidget *parent) : QOpenGLWidget{parent}
 {
     //get mouse move / hover events
@@ -302,6 +304,20 @@ void CMinefield::drawMinefield(QPainter* Painter)
 
 }
 
+//Get the number of cells created
+uint CMinefield::getCellCount(bool bUseCurrent,uint Size){
+    if ( bUseCurrent )
+        return m_Minefield.count();
+
+    QPointI offeredSize = QPointI(Size,Size);
+
+    offerNewCellSize(geometry().width(),geometry().height(),&offeredSize);
+
+    int cells = geometry().width() / offeredSize.x() + geometry().height() / offeredSize.y();
+
+    return cells;
+}
+
 //Find a cell size the fills the space closest to the desired
 // cell size without excessive growth
 QPointI offerNewCellSize(uint width, uint height, QPointI* OfferedSize)
@@ -352,8 +368,8 @@ void CMinefield::setCellSize(uint CellSize)
     if ( CellSize < 32 )
         return;
 
-    uint width = this->geometry().width();
-    uint height = this->geometry().height();
+    uint width = geometry().width();
+    uint height = geometry().height();
 
     QPointI cellSize = QPointI(CellSize,CellSize);
     m_uiCellSize = CellSize;

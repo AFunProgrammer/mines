@@ -80,6 +80,7 @@ public:
 
     uint getCellSize();
     void setCellSize(uint CellSize);
+    uint getCellCount(bool bUseCurrent=true,uint Size = 32);
 
     void setBounds(QRect Rect);
     void setClearColor(QColor Color);
