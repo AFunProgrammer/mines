@@ -9,5 +9,10 @@
         <file alias="flag">flag_64.png</file>
         <file>Flag_300.png</file>
         <file alias="mouse">mouse_64.png</file>
+        <file alias="drydirt">drydirt.png</file>
+        <file alias="drymud">drymud.png</file>
+        <file alias="redclay">redclay.png</file>
+        <file alias="rocks">rocks.png</file>
+        <file alias="rockydirt">rockydirt.png</file>
     </qresource>
 </RCC>

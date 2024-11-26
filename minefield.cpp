@@ -42,11 +42,12 @@ uint CMinefield::getCellSize()
 
 QPixmap CMinefield::drawGrid()
 {
+    QRect clientArea = QRect(0,0,geometry().width(),geometry().height());
     QPixmap grid = QPixmap(geometry().width(), geometry().height());
     QPainter painter = QPainter(&grid);
 
     painter.setBrush(Qt::GlobalColor::lightGray);
-    painter.drawRect(geometry());
+    painter.drawRect(clientArea);
 
     int rows = m_Minefield.count();
     int cols = (rows > 0 ? m_Minefield[0].count() : 0 );
@@ -170,6 +171,7 @@ QPixmap CMinefield::drawFlag()
 
 QPixmap CMinefield::drawValues()
 {
+    QRect clientArea = QRect(0,0,geometry().width(),geometry().height());
     QPixmap values = QPixmap(geometry().width(),geometry().height());
     values.fill(Qt::transparent);
     QPainter painter(&values);
@@ -178,7 +180,7 @@ QPixmap CMinefield::drawValues()
     painter.setBackgroundMode(Qt::BGMode::TransparentMode);
     painter.setBackground(QBrush(Qt::transparent));
 
-    painter.fillRect(geometry(),QBrush(Qt::transparent));
+    painter.fillRect(clientArea,QBrush(Qt::transparent));
 
     int rows = m_Minefield.count();
     int cols = (rows > 0 ? m_Minefield[0].count() : 0 );
@@ -256,6 +258,7 @@ QPixmap CMinefield::drawValues()
 /*********** TODO *************/
 void CMinefield::drawMinefield(QPainter* Painter)
 {
+    QRect clientArea = QRect(0,0,geometry().width(),geometry().height());
     //Draw Pixmaps For Each Necessary Item (should be lightweight)
     if ( m_bDirtyUpdate )
     {
@@ -267,8 +270,8 @@ void CMinefield::drawMinefield(QPainter* Painter)
         m_bDirtyUpdate = false;
     }
 
-    Painter->drawPixmap(geometry(),m_pxmGrid);
-    Painter->drawPixmap(geometry(),m_pxmValues);
+    Painter->drawPixmap(clientArea,m_pxmGrid);
+    Painter->drawPixmap(clientArea,m_pxmValues);
 
     for( int y = 0; y < m_Minefield.count(); y++ )
         for( int x = 0; x < m_Minefield[y].count(); x++ )

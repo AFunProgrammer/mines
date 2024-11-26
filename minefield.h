@@ -50,7 +50,7 @@ private:
     QPointI m_Bomb = QPointI(-1,-1);
 
     QPixmap m_pxmGrid;
-    QPixmap m_pxmValues;;
+    QPixmap m_pxmValues;
     QPixmap m_pxmPushBox;
     QPixmap m_pxmPushedBox;
     QPixmap m_pxmFlag;

@@ -19,6 +19,9 @@ public:
     CMines(QWidget *parent = nullptr);
     ~CMines();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private:
     Ui::CMines *ui;
 };
