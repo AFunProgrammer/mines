@@ -1,7 +1,6 @@
 #include "minefield.h"
 
 #include <iostream>
-
 #include <QtMath>
 
 QPointI offerNewCellSize(uint width, uint height, QPointI* OfferedSize);
@@ -14,6 +13,13 @@ CMinefield::CMinefield(QWidget *parent) : QOpenGLWidget{parent}
 
     setAutoFillBackground(false);
     setCellSize(50);
+
+    m_pxmCellUp = QPixmap(":/rocks");//drawPushBox();
+    m_pxmCellDown = QPixmap(":/drydirt");//drawPushedBox();
+    m_pxmMine = QPixmap(":/mine");
+    m_pxmFlag = QPixmap(":/flag");
+
+    qDebug() << "Bomb: " << m_pxmMine << " Flag: " << m_pxmFlag;
 }
 
 CMinefield::~CMinefield()
@@ -27,9 +33,18 @@ void CMinefield::setClearColor(QColor Color)
     m_ClearColor = Color;
 }
 
-void CMinefield::setBounds(QRect Rect)
-{
-    setGeometry(Rect);
+void CMinefield::setClickType(ClickType Type){
+    switch(Type){
+    case ClickType::Normal:
+        m_ClickType = ClickType::Normal;
+        break;
+    case ClickType::Flag:
+        m_ClickType = ClickType::Flag;
+        break;
+    default:
+        m_ClickType = ClickType::Normal;
+        break;
+    }
 }
 
 int CMinefield::getBombCount()
@@ -95,7 +110,7 @@ QPixmap CMinefield::drawGrid()
 QPixmap CMinefield::drawPushBox()
 {
     //Create pushBox, make sure it's size is smaller than the cell
-    QPixmap pushBox = QPixmap(m_CellSize[0]-1,m_CellSize[1]-1);
+    QPixmap pushBox = QPixmap(128,128);
     QPainter painter = QPainter(&pushBox);
 
     uint left = 0;
@@ -126,7 +141,7 @@ QPixmap CMinefield::drawPushBox()
 QPixmap CMinefield::drawPushedBox()
 {
     //Create pushBox, make sure it's size is smaller than the cell
-    QPixmap pushedBox = QPixmap(m_CellSize[0]-1,m_CellSize[1]-1);
+    QPixmap pushedBox = QPixmap(128,128);
     QPainter painter = QPainter(&pushedBox);
 
     uint left = 0;
@@ -175,83 +190,98 @@ QPixmap CMinefield::drawValues()
 {
     QRect clientArea = QRect(0,0,geometry().width(),geometry().height());
     QPixmap values = QPixmap(geometry().width(),geometry().height());
+    QPixmap value = QPixmap((m_CellSize.x()*4)/3,(m_CellSize.y()*4)/3);
+    QRect valueArea = QRect(0,0,value.width(),value.height());
+
     values.fill(Qt::transparent);
-    QPainter painter(&values);
+    QPainter paintCells(&values);
     QColor fontColor;
 
-    painter.setBackgroundMode(Qt::BGMode::TransparentMode);
-    painter.setBackground(QBrush(Qt::transparent));
+    paintCells.setBackgroundMode(Qt::BGMode::TransparentMode);
+    paintCells.setBackground(QBrush(Qt::transparent));
 
-    painter.fillRect(clientArea,QBrush(Qt::transparent));
+    paintCells.fillRect(clientArea,QBrush(Qt::transparent));
+    paintCells.setFont(m_CellFont);
 
     int rows = m_Minefield.count();
     int cols = (rows > 0 ? m_Minefield[0].count() : 0 );
 
-    painter.setFont(m_CellFont);
+    for( int y = 0; y < rows; y++ ){
+        for( int x = 0; x < cols; x++ ){
+            uint left = m_ExtraSpace[0]/2 + (m_CellSize[0]*x) + 1;
+            uint top = m_ExtraSpace[1]/2 + (m_CellSize[1]*y) + 1;
+            uint width = m_CellSize[0] - 1;
+            uint height = m_CellSize[1] - 1;
 
-    for( int y = 0; y < rows; y++ )
-    {
-       for( int x = 0; x < cols; x++ )
-       {
-           uint left = m_ExtraSpace[0]/2 + (m_CellSize[0]*x) + 1;
-           uint top = m_ExtraSpace[1]/2 + (m_CellSize[1]*y) + 1;
-           uint width = m_CellSize[0] - 1;
-           uint height = m_CellSize[1] - 1;
+            QRect InsideRect = QRect(left+1,top+1,width-1,height-1);
 
-           QRect InsideRect = QRect(left+1,top+1,width-1,height-1);
+            //Update rect
+            m_Minefield[y][x].m_Rect = InsideRect;
 
-           //Update rect
-           m_Minefield[y][x].m_Rect = InsideRect;
+            //If no value then continue onward
+            if ( m_Minefield[y][x].m_Value == ' ' )
+                continue;
 
-           //If no value then continue onward
-           if ( m_Minefield[y][x].m_Value == ' ' )
-               continue;
+            //For Centering The Font
+            int charWidth = m_pFontMetrics->horizontalAdvance(QChar(m_Minefield[y][x].m_Value));
+            //QRect fontRect = QRect(InsideRect.left() + InsideRect.width()/2 - charWidth/2,
+            //                       InsideRect.top(),
+            //                       charWidth,
+            //                       InsideRect.height());
+            QRect fontRect = QRect(valueArea.left() + valueArea.width()/2 - charWidth/2,
+                                   valueArea.top(),
+                                   charWidth,
+                                   valueArea.height());
 
-           //For Centering The Font
-           int charWidth = m_pFontMetrics->horizontalAdvance(QChar(m_Minefield[y][x].m_Value));
-           QRect fontRect = QRect(InsideRect.left() + InsideRect.width()/2 - charWidth/2,
-                                  InsideRect.top(),
-                                  charWidth,
-                                  InsideRect.height());
+            value.fill(Qt::transparent);
 
-           switch(static_cast<int>(m_Minefield[y][x].m_Value))
-           {
-           case '1':
-               fontColor = Qt::GlobalColor::darkBlue;
-               break;
-           case '2':
-               fontColor = Qt::GlobalColor::darkCyan;
-               break;
-           case '3':
-               fontColor = QColor::fromRgb(160,64,0); //DarkOrange
-               break;
-           case '4':
-               fontColor = Qt::GlobalColor::darkGreen;
-               break;
-           case '5':
-               fontColor = Qt::GlobalColor::darkMagenta;
-               break;
-           case '6':
-               fontColor = Qt::GlobalColor::darkYellow;
-               break;
-           case '7':
-               fontColor = QColor::fromRgb(115,77,70); //Brown
-               break;
-           case '8':
-               fontColor = Qt::GlobalColor::darkRed;
-               break;
-           case '*':
-               fontColor = Qt::black;
-               break;
-           }
+            QPainter paintValue(&value);
+            paintValue.fillRect(clientArea,Qt::transparent);
+            paintValue.setFont(m_CellFont);
 
-           painter.setPen(fontColor);
-           painter.setBrush(fontColor);
-           painter.drawText(fontRect,QString(m_Minefield[y][x].m_Value));
+            switch(static_cast<int>(m_Minefield[y][x].m_Value))
+            {
+            case '1':
+                fontColor = Qt::GlobalColor::darkBlue;
+                break;
+            case '2':
+                fontColor = Qt::GlobalColor::darkCyan;
+                break;
+            case '3':
+                fontColor = QColor::fromRgb(160,64,0); //DarkOrange
+                break;
+            case '4':
+                fontColor = Qt::GlobalColor::darkGreen;
+                break;
+            case '5':
+                fontColor = Qt::GlobalColor::darkMagenta;
+                break;
+            case '6':
+                fontColor = Qt::GlobalColor::darkYellow;
+                break;
+            case '7':
+                fontColor = QColor::fromRgb(115,77,70); //Brown
+                break;
+            case '8':
+                fontColor = Qt::GlobalColor::darkRed;
+                break;
+            case '*':
+                // Draw the mine / bomb
+                //fontColor = Qt::black;
+                paintCells.drawPixmap(InsideRect, m_pxmMine);
+                continue;
+            }
+
+            paintValue.setPen(fontColor);
+            paintValue.setBrush(fontColor);
+            paintValue.drawText(fontRect, QString(m_Minefield[y][x].m_Value));
+            paintValue.end();
+
+            paintCells.drawPixmap(InsideRect,value);
         }
     }
 
-    painter.end();
+    paintCells.end();
     return values;
 }
 
@@ -262,37 +292,36 @@ void CMinefield::drawMinefield(QPainter* Painter)
 {
     QRect clientArea = QRect(0,0,geometry().width(),geometry().height());
     //Draw Pixmaps For Each Necessary Item (should be lightweight)
-    if ( m_bDirtyUpdate )
+    if ( m_bResized )
     {
         m_pxmGrid = drawGrid();
         m_pxmValues = drawValues();
-        m_pxmPushBox = drawPushBox();
-        m_pxmPushedBox = drawPushedBox();
-        m_pxmFlag = drawFlag();
-        m_bDirtyUpdate = false;
+        m_bResized = false;
     }
 
     Painter->drawPixmap(clientArea,m_pxmGrid);
     Painter->drawPixmap(clientArea,m_pxmValues);
 
-    for( int y = 0; y < m_Minefield.count(); y++ )
+    for( int y = 0; y < m_Minefield.count(); y++ ){
         for( int x = 0; x < m_Minefield[y].count(); x++ )
         {
-            if ( m_Minefield[y][x].m_DrawBox )
+            if ( m_Minefield[y][x].m_DrawBox && m_GameState == GameState::Playing )
             {
-                Painter->drawPixmap(m_Minefield[y][x].m_Rect,m_pxmPushBox);
-                if ( m_Minefield[y][x].m_HasFlag )
-                    Painter->drawPixmap(m_Minefield[y][x].m_Rect,m_pxmFlag);
+                Painter->drawPixmap(m_Minefield[y][x].m_Rect,m_pxmCellUp);
             }
+            if ( m_Minefield[y][x].m_HasFlag )
+                Painter->drawPixmap(m_Minefield[y][x].m_Rect,m_pxmFlag);
         }
+    }
 
-    if ( m_HoverCell[0] != -1 )
+    if ( m_HoverCell[0] != -1 && m_GameState == GameState::Playing ){
         if ( m_Minefield[m_HoverCell[1]][m_HoverCell[0]].m_DrawBox )
         {
-            Painter->drawPixmap(m_Minefield[m_HoverCell[1]][m_HoverCell[0]].m_Rect,m_pxmPushedBox);
+            Painter->drawPixmap(m_Minefield[m_HoverCell[1]][m_HoverCell[0]].m_Rect,m_pxmCellDown);
             if ( m_Minefield[m_HoverCell[1]][m_HoverCell[0]].m_HasFlag )
                 Painter->drawPixmap(m_Minefield[m_HoverCell[1]][m_HoverCell[0]].m_Rect,m_pxmFlag);
         }
+    }
 
     if ( m_Bomb[0] != -1 )
     {
@@ -309,59 +338,10 @@ uint CMinefield::getCellCount(bool bUseCurrent,uint Size){
     if ( bUseCurrent )
         return m_Minefield.count();
 
-    QPointI offeredSize = QPointI(Size,Size);
-
-    offerNewCellSize(geometry().width(),geometry().height(),&offeredSize);
-
-    int cells = geometry().width() / offeredSize.x() + geometry().height() / offeredSize.y();
+    int cells = geometry().width() / Size + geometry().height() / Size;
 
     return cells;
 }
-
-//Find a cell size the fills the space closest to the desired
-// cell size without excessive growth
-QPointI offerNewCellSize(uint width, uint height, QPointI* OfferedSize)
-{
-    QPointI initialSize = *OfferedSize;
-    QPointI extraSpace;
-
-    QPointI coords = QPointI(width,height);
-    uint checkSize = 0;
-    uint closest;
-    uint space = 0;
-
-    for(uint coord = 0; coord <= 1; coord++ )
-    {
-        closest = 999;
-
-        for( int sign = -1; sign <= 1; sign++ )
-        {
-            if (sign == 0)
-                continue;
-
-            checkSize = initialSize[coord];
-
-            for( int i = 0; i < 5; i++ )
-            {
-                checkSize += i*sign;
-                int value = coords[coord];
-                space = value % checkSize;
-                //space = coords[coord] % checkSize;
-
-                if ( space < closest )
-                {
-                    OfferedSize->setIndex(coord,checkSize);
-                    extraSpace.setIndex(coord,space);
-                    closest = space;
-                }//endif
-            }//end for( int i...
-        }//end for(int sign...
-    }//end for(uint coord...
-
-    //qDebug() << "debug: " << "Initial Size: " << initialSize[0] << ":" << initialSize[1] << "Offered Size: " << (*OfferedSize)[0] << ":" << (*OfferedSize)[1] << "Extra Space: " << extraSpace[0] << ":" << extraSpace[1];
-
-    return extraSpace;
-}//end QPoint offerNewCellSize
 
 void CMinefield::setCellSize(uint CellSize)
 {
@@ -375,7 +355,7 @@ void CMinefield::setCellSize(uint CellSize)
     m_uiCellSize = CellSize;
 
     //calculate size based upon nearest amount to fill entire area
-    m_ExtraSpace = offerNewCellSize(width,height,&cellSize);
+    m_ExtraSpace = QPointI(width % CellSize, height % CellSize);
 
     m_CellSize = cellSize;
     uint uiSize = fmin(cellSize[0],cellSize[1]);
@@ -393,7 +373,7 @@ void CMinefield::setCellSize(uint CellSize)
 
     m_iCellCount = (width / m_CellSize[0]) * (height / m_CellSize[1]);
 
-    m_bDirtyUpdate = true;
+    m_bResized = true;
 }
 
 void CMinefield::generateMinefield(uint NumberOfBombs)
@@ -409,7 +389,7 @@ void CMinefield::generateMinefield(uint NumberOfBombs)
     m_HitBox = QPointI(-1,-1);
     m_GameState = GameState::Playing;
 
-    m_bDirtyUpdate = true;
+    m_bResized = true;
 
     m_iBombCount = NumberOfBombs;
 
@@ -432,8 +412,8 @@ void CMinefield::generateMinefield(uint NumberOfBombs)
     }
 
     //Change the number of bombs if there are too many...
-    if ( m_iCellCount / 8 <= m_iBombCount )
-        UseThisManyBombs = m_iCellCount / 8;
+    if ( UseThisManyBombs >= m_iCellCount )
+        UseThisManyBombs = m_iCellCount - 2;
 
 
     //Randomly select bomb locations
@@ -630,7 +610,6 @@ void CMinefield::mousePressEvent(QMouseEvent *event)
 
     if ( m_GameState != GameState::Playing )
     {
-        mouseDoubleClickEvent(event);
         return;
     }
 
@@ -673,7 +652,8 @@ void CMinefield::mousePressEvent(QMouseEvent *event)
     {
         m_HitBox = closest;
 
-        if ( event->deviceType() == QInputDevice::DeviceType::Mouse && event->button() == Qt::RightButton)
+        if ( m_ClickType == ClickType::Flag ||
+            (event->deviceType() == QInputDevice::DeviceType::Mouse && event->button() == Qt::RightButton)){
             if ( m_Minefield[m_HitBox[1]][m_HitBox[0]].m_DrawBox )
             {
                 m_Minefield[m_HitBox[1]][m_HitBox[0]].m_HasFlag = !(m_Minefield[m_HitBox[1]][m_HitBox[0]].m_HasFlag);
@@ -681,6 +661,7 @@ void CMinefield::mousePressEvent(QMouseEvent *event)
                 this->update();
                 return;
             }
+        }
 
         if ( m_Minefield[m_HitBox[1]][m_HitBox[0]].m_HasFlag )
         {
@@ -690,10 +671,6 @@ void CMinefield::mousePressEvent(QMouseEvent *event)
 
         if ( m_Minefield[m_HitBox[1]][m_HitBox[0]].m_Value == '*' )
         {
-            for( int y=0; y < m_Minefield.count(); y++ )
-                for( int x=0; x < m_Minefield[y].count(); x++ )
-                    m_Minefield[y][x].m_DrawBox = false;
-
             m_Bomb = closest;
             m_GameState = GameState::Lost;
         }
@@ -761,35 +738,9 @@ void CMinefield::mouseMoveEvent(QMouseEvent* event)
         this->update();
 }
 
-void CMinefield::wheelEvent(QWheelEvent* event)
-{
-    int cellSize = (int)m_uiCellSize + event->angleDelta().ry() / 8;
-
-    if ( cellSize <= 5 )
-        return;
-
-    if ( cellSize >= geometry().width() / 4 )
-        return;
-
-    setCellSize(static_cast<uint>(cellSize));
-    generateMinefield(m_iBombCount);
-
-    this->update();
-}
-
-//TODO
-void CMinefield::mouseDoubleClickEvent(QMouseEvent*)
-{
-    //Reset on a double click
-    generateMinefield(m_iBombCount);
-
-    //possible marking a mine
-    this->update();
-    this->repaint();
-}
-
 void CMinefield::paintEvent(QPaintEvent *event)
 {
+    QRect clientArea = QRect(0,0,geometry().width(),geometry().height());
     QPainter Painter(this);
     QBrush brushBackground = QBrush(m_ClearColor);
 
@@ -800,9 +751,6 @@ void CMinefield::paintEvent(QPaintEvent *event)
     Painter.setRenderHint(QPainter::SmoothPixmapTransform);
     Painter.fillRect(event->rect(),brushBackground);
     Painter.setFont(m_CellFont);
-
-
-    drawMinefield(&Painter);
 
     //check for win
     if ( m_Bomb[0] == -1 && m_GameState == GameState::Playing )
@@ -819,6 +767,10 @@ void CMinefield::paintEvent(QPaintEvent *event)
             m_GameState = GameState::Won;
     }
 
+    // Draw everything
+    drawMinefield(&Painter);
+
+
     QVector<QString> GameMessage;
 
     if ( m_GameState == GameState::Won )
@@ -832,14 +784,8 @@ void CMinefield::paintEvent(QPaintEvent *event)
 
     if ( m_GameState != GameState::Playing )
     {
-        GameMessage.append(" ");
-        GameMessage.append("Click To Restart");
-        GameMessage.append(" ");
-        GameMessage.append("Change Size With");
-        GameMessage.append("Mouse Wheel");
-
         Painter.setBrush(QColor::fromRgbF(1.0f,1.0f,1.0f,.50f));
-        Painter.drawRect(geometry());
+        Painter.drawRect(clientArea);
 
         Painter.setPen(Qt::red);
         QFont fMessage = QFont("SansSerif", 48, QFont::Bold, false);
@@ -853,7 +799,7 @@ void CMinefield::paintEvent(QPaintEvent *event)
 
         Painter.setFont(fMessage);
 
-        QPoint drawPoint = geometry().center();
+        QPoint drawPoint = clientArea.center();
         drawPoint.setY(drawPoint.y() - ((fMetrics.height() * (GameMessage.count()+1))/2));
 
         for( QString line: GameMessage )
@@ -861,7 +807,7 @@ void CMinefield::paintEvent(QPaintEvent *event)
             drawPoint.setX(drawPoint.rx() - fMetrics.boundingRect(line).width()/2);
             drawPoint.setY(drawPoint.ry() + fMetrics.height());
             Painter.drawText(drawPoint,line);
-            drawPoint.setX(geometry().center().rx());
+            drawPoint.setX(clientArea.center().rx());
         }
     }
 

@@ -17,6 +17,12 @@ enum class GameState
     Won = 0x2
 };
 
+enum class ClickType
+{
+    Normal = 0x0,
+    Flag = 0x1
+};
+
 typedef struct _MineFieldCell
 {
     char m_Value = '0'; //default is nothing in/near cell
@@ -34,13 +40,13 @@ public:
 
 //single class needs
 private:
-    QSvgRenderer m_SvgRenderer;
     QVector<QVector<MineFieldCell>> m_Minefield;
 
     QColor m_ClearColor = Qt::black;
 
-    bool m_bDirtyUpdate = false;
+    bool m_bResized = false;
     GameState m_GameState = GameState::Playing;
+    ClickType m_ClickType = ClickType::Normal;
 
     int  m_iBombCount = 0;
     int  m_iCellCount = 0;
@@ -51,8 +57,9 @@ private:
 
     QPixmap m_pxmGrid;
     QPixmap m_pxmValues;
-    QPixmap m_pxmPushBox;
-    QPixmap m_pxmPushedBox;
+    QPixmap m_pxmCellUp;
+    QPixmap m_pxmCellDown;
+    QPixmap m_pxmMine;
     QPixmap m_pxmFlag;
 
     QPointI m_ExtraSpace;
@@ -80,17 +87,14 @@ public:
 
     uint getCellSize();
     void setCellSize(uint CellSize);
-    uint getCellCount(bool bUseCurrent=true,uint Size = 32);
+    uint getCellCount(bool bUseCurrent=true, uint Size = 32);
 
-    void setBounds(QRect Rect);
+    void setClickType(ClickType Type);
     void setClearColor(QColor Color);
 
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseDoubleClickEvent(QMouseEvent*) override;
-    void wheelEvent(QWheelEvent* event) override;
-
 };
 
 #endif // CMINEFIELD_H
