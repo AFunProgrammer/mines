@@ -92,6 +92,8 @@ public:
     void setClickType(ClickType Type);
     void setClearColor(QColor Color);
 
+    void setUpDownCellImages(QString ResourceName);
+
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent* event) override;

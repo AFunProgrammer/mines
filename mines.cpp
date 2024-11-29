@@ -3,6 +3,27 @@
 
 bool bInitializing = true;
 
+
+
+
+////////////////////////
+/// \brief all the dirt
+/// drydirt
+/// drymud
+/// redclay
+/// rocks
+/// rockydirt
+//
+
+QVector<QString> g_CellImages = {
+    QString(""),
+    QString(":/drydirt"),
+    QString(":/drymud"),
+    QString(":/redclay"),
+    QString(":/rocks"),
+    QString(":/rockydirt")
+};
+
 void CMines::setCellSizeSlider(){
     QSize fieldSize = ui->oglMinefield->geometry().size();
     int maxCellSize = qMin(fieldSize.width()/4,fieldSize.height()/4);
@@ -43,14 +64,6 @@ CMines::CMines(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->btnReset->connect(ui->btnReset,&QPushButton::clicked,[this](){
-        ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
-        ui->oglMinefield->generateMinefield(ui->sldrMines->value());
-        //repaint
-        ui->oglMinefield->update();
-        ui->oglMinefield->repaint();
-    });
-
     ui->sldrCellSize->connect(ui->sldrCellSize,&QSlider::valueChanged,[this](int value)
     {
         ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
@@ -80,6 +93,27 @@ CMines::CMines(QWidget *parent)
 
     ui->btnFlag->connect(ui->btnFlag, &QPushButton::clicked, [this](){
         ui->oglMinefield->setClickType(ClickType::Flag);
+    });
+
+    ui->btnReset->connect(ui->btnReset,&QPushButton::clicked,[this](){
+        ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
+        ui->oglMinefield->generateMinefield(ui->sldrMines->value());
+        //repaint
+        ui->oglMinefield->update();
+        ui->oglMinefield->repaint();
+    });
+
+    ui->btnChangeCellImage->connect(ui->btnChangeCellImage,&QPushButton::clicked,[this](){
+        static int currentImage = 4;
+
+        currentImage++;
+        if ( currentImage >= ::g_CellImages.count() ){
+            currentImage = 0;
+        }
+
+        ui->oglMinefield->setUpDownCellImages(::g_CellImages[currentImage]);
+        ui->oglMinefield->update();
+        ui->oglMinefield->repaint();
     });
 
     ui->btnExit->connect(ui->btnExit, &QPushButton::clicked, qApp, &QCoreApplication::quit);
