@@ -14,8 +14,9 @@ CMinefield::CMinefield(QWidget *parent) : QOpenGLWidget{parent}
     setAutoFillBackground(false);
     setCellSize(50);
 
-    m_pxmCellUp = QPixmap(":/rocks");//drawPushBox();
-    m_pxmCellDown = QPixmap(":/drydirt");//drawPushedBox();
+    // set rocks as default because it looks nice
+    setUpDownCellImages(":/rocks");
+
     m_pxmMine = QPixmap(":/mine");
     m_pxmFlag = QPixmap(":/flag");
 
@@ -106,6 +107,30 @@ QPixmap CMinefield::drawGrid()
 
     return grid;
 }
+
+void CMinefield::setUpDownCellImages(QString ResourceName){
+    QResource res = QResource(ResourceName);
+    QImage image;
+
+    if ( ResourceName == "" || res.isValid() == false ){
+        image = drawPushBox().toImage();
+    } else {
+        image = QImage(ResourceName);
+    }
+
+    QPixmap darker = QPixmap(image.size());
+    QPainter paintDarker = QPainter(&darker);
+
+    m_pxmCellUp = QPixmap::fromImage(image);
+
+    darker.fill(Qt::black);
+    paintDarker.setOpacity(0.5f);
+    paintDarker.drawImage(0,0,image);
+    paintDarker.end();
+
+    m_pxmCellDown = QPixmap(darker);
+}
+
 
 QPixmap CMinefield::drawPushBox()
 {
@@ -788,7 +813,7 @@ void CMinefield::paintEvent(QPaintEvent *event)
         Painter.drawRect(clientArea);
 
         Painter.setPen(Qt::red);
-        QFont fMessage = QFont("SansSerif", 48, QFont::Bold, false);
+        QFont fMessage = QFont("SansSerif", 72, QFont::Bold, false);
         QFontMetrics fMetrics = QFontMetrics(fMessage,Painter.paintEngine()->paintDevice());
 
         if ( fMetrics.maxWidth() * 16 > geometry().width() )
