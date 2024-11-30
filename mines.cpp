@@ -26,14 +26,14 @@ QVector<QString> g_CellImages = {
 
 void CMines::setCellSizeSlider(){
     QSize fieldSize = ui->oglMinefield->geometry().size();
-    int maxCellSize = qMin(fieldSize.width()/4,fieldSize.height()/4);
+    int maxCellSize = qMin(fieldSize.width()/3,fieldSize.height()/3);
 
     int sldrCellSize = ui->sldrCellSize->value();
 
-    ui->sldrCellSize->setMinimum(32);
+    ui->sldrCellSize->setMinimum(40);
     ui->sldrCellSize->setMaximum(maxCellSize);
-    ui->sldrCellSize->setSingleStep(maxCellSize/8);
-    ui->sldrCellSize->setPageStep(maxCellSize/4);
+    ui->sldrCellSize->setSingleStep(maxCellSize/6);
+    ui->sldrCellSize->setPageStep(maxCellSize/3);
     ui->sldrCellSize->setValue(sldrCellSize);
 }
 
@@ -64,7 +64,7 @@ CMines::CMines(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->sldrCellSize->connect(ui->sldrCellSize,&QSlider::valueChanged,[this](int value)
+    ui->sldrCellSize->connect(ui->sldrCellSize,&QSlider::valueChanged,[this]()
     {
         ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
 
@@ -77,7 +77,7 @@ CMines::CMines(QWidget *parent)
 
     });
 
-    ui->sldrMines->connect(ui->sldrMines,&QSlider::valueChanged,[this](int value)
+    ui->sldrMines->connect(ui->sldrMines,&QSlider::valueChanged,[this]()
     {
         ui->oglMinefield->generateMinefield(ui->sldrMines->value());
         ui->lblMines->setText(QString("Mines: %0").arg(ui->sldrMines->value()));
