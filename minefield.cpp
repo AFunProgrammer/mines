@@ -12,7 +12,7 @@ CMinefield::CMinefield(QWidget *parent) : QOpenGLWidget{parent}
     setAttribute(Qt::WA_Hover, true);
 
     setAutoFillBackground(false);
-    setCellSize(50);
+    setCellSize(40);
 
     // set rocks as default because it looks nice
     setUpDownCellImages(":/rocks");
