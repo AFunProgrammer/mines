@@ -12,9 +12,10 @@
 
 enum class GameState
 {
-    Playing = 0x0,
-    Lost = 0x1,
-    Won = 0x2
+    Waiting = 0x0,
+    Playing = 0x1,
+    Lost = 0x2,
+    Won = 0x3
 };
 
 enum class ClickType
@@ -45,11 +46,13 @@ private:
     QColor m_ClearColor = Qt::black;
 
     bool m_bResized = false;
-    GameState m_GameState = GameState::Playing;
+    GameState m_GameState = GameState::Waiting;
     ClickType m_ClickType = ClickType::Normal;
 
     int  m_iBombCount = 0;
     int  m_iCellCount = 0;
+
+    QTimer* m_pTimer = nullptr;
 
     QPointI m_HoverCell = QPointI(-1,-1);
     QPointI m_HitBox = QPointI(-1,-1);
@@ -84,6 +87,8 @@ private:
 public:
     int getBombCount();
     void generateMinefield(uint NumberOfBombs);
+
+    void setExternalTimer(QTimer* Timer);
 
     uint getCellSize();
     void setCellSize(uint CellSize);
