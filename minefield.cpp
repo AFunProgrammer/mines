@@ -58,6 +58,11 @@ uint CMinefield::getCellSize()
     return m_uiCellSize;
 }
 
+
+void CMinefield::setExternalTimer(QTimer* Timer){
+    m_pTimer = Timer;
+}
+
 QPixmap CMinefield::drawGrid()
 {
     QRect clientArea = QRect(0,0,geometry().width(),geometry().height());
@@ -330,7 +335,7 @@ void CMinefield::drawMinefield(QPainter* Painter)
     for( int y = 0; y < m_Minefield.count(); y++ ){
         for( int x = 0; x < m_Minefield[y].count(); x++ )
         {
-            if ( m_Minefield[y][x].m_DrawBox && m_GameState == GameState::Playing )
+            if ( m_Minefield[y][x].m_DrawBox && (m_GameState == GameState::Playing || m_GameState == GameState::Waiting))
             {
                 Painter->drawPixmap(m_Minefield[y][x].m_Rect,m_pxmCellUp);
             }
@@ -339,7 +344,7 @@ void CMinefield::drawMinefield(QPainter* Painter)
         }
     }
 
-    if ( m_HoverCell[0] != -1 && m_GameState == GameState::Playing ){
+    if ( m_HoverCell[0] != -1 && (m_GameState == GameState::Playing || m_GameState == GameState::Waiting)){
         if ( m_Minefield[m_HoverCell[1]][m_HoverCell[0]].m_DrawBox )
         {
             Painter->drawPixmap(m_Minefield[m_HoverCell[1]][m_HoverCell[0]].m_Rect,m_pxmCellDown);
@@ -412,7 +417,7 @@ void CMinefield::generateMinefield(uint NumberOfBombs)
     m_Bomb = QPointI(-1,-1);
     m_HoverCell = QPointI(-1,-1);
     m_HitBox = QPointI(-1,-1);
-    m_GameState = GameState::Playing;
+    m_GameState = GameState::Waiting;
 
     m_bResized = true;
 
@@ -533,6 +538,14 @@ void CMinefield::checkForHitEmptyAndUpdate()
          m_Minefield[m_HitBox[1]][m_HitBox[0]].m_DrawBox == false )
         return;
 
+    // if there is a timer set to kick off when first run
+    if ( m_GameState == GameState::Waiting ){
+        m_GameState = GameState::Playing;
+        if ( m_pTimer ){
+            m_pTimer->start();
+        }
+    }
+
     int rows = m_Minefield.count();
     int cols = m_Minefield[0].count();
 
@@ -633,8 +646,7 @@ void CMinefield::mousePressEvent(QMouseEvent *event)
     QPoint clickPos = event->pos();
     QRect clickArea = QRect(0,0,0,0);
 
-    if ( m_GameState != GameState::Playing )
-    {
+    if ( m_GameState == GameState::Won || m_GameState == GameState::Lost ){
         return;
     }
 
@@ -672,7 +684,7 @@ void CMinefield::mousePressEvent(QMouseEvent *event)
         }
 
     if ( closest == QPointI(-1,-1) )
-        std::cerr << "debug: nothing to output or do" << std::endl;
+        qDebug() << "debug: nothing to output or do";
     else
     {
         m_HitBox = closest;
@@ -698,6 +710,10 @@ void CMinefield::mousePressEvent(QMouseEvent *event)
         {
             m_Bomb = closest;
             m_GameState = GameState::Lost;
+            // stop the timer
+            if ( m_pTimer ){
+                m_pTimer->stop();
+            }
         }
         else
             checkForHitEmptyAndUpdate();
@@ -716,8 +732,9 @@ void CMinefield::mouseMoveEvent(QMouseEvent* event)
     QPoint clickPos = event->pos();
     QRect clickArea = QRect(0,0,0,0);
 
-    if ( m_GameState != GameState::Playing )
+    if ( m_GameState == GameState::Won || m_GameState == GameState::Lost ){
         return;
+    }
 
     float fDpcmX = (float)qpMeasure.device()->logicalDpiX() / 2.54f;
     float fDpcmY = (float)qpMeasure.device()->logicalDpiY() / 2.54f;
@@ -778,7 +795,7 @@ void CMinefield::paintEvent(QPaintEvent *event)
     Painter.setFont(m_CellFont);
 
     //check for win
-    if ( m_Bomb[0] == -1 && m_GameState == GameState::Playing )
+    if ( m_Bomb[0] == -1 && (m_GameState == GameState::Playing || m_GameState == GameState::Waiting))
     {
         int count = 0;
         for( QVector<MineFieldCell> vmfc: m_Minefield )
@@ -788,27 +805,30 @@ void CMinefield::paintEvent(QPaintEvent *event)
                     count++;
             }
 
-        if ( count == 0 )
+        if ( count == 0 ){
             m_GameState = GameState::Won;
+            // stop the timer
+            if ( m_pTimer ){
+                m_pTimer->stop();
+            }
+        }
     }
 
     // Draw everything
     drawMinefield(&Painter);
 
-
-    QVector<QString> GameMessage;
-
-    if ( m_GameState == GameState::Won )
+    if ( m_GameState == GameState::Lost || m_GameState == GameState::Won )
     {
-        GameMessage.append("You Won!!!");
-    }
-    else if ( m_GameState == GameState::Lost )
-    {
-        GameMessage.append("You Lost :'(");
-    }
+        QVector<QString> GameMessage;
+        if ( m_GameState == GameState::Won )
+        {
+            GameMessage.append("You Won!!!");
+        }
+        else if ( m_GameState == GameState::Lost )
+        {
+            GameMessage.append("You Lost :'(");
+        }
 
-    if ( m_GameState != GameState::Playing )
-    {
         Painter.setBrush(QColor::fromRgbF(1.0f,1.0f,1.0f,.50f));
         Painter.drawRect(clientArea);
 

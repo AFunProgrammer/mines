@@ -51,12 +51,22 @@ void CMines::setMinesSlider(){
     ui->lblMines->setText(QString("Mines: %0").arg(ui->sldrMines->value()));
 }
 
-
 void CMines::setSliderSteps(){
     setCellSizeSlider();
     setMinesSlider();
 }
 
+void CMines::resetGame(){
+    //repaint
+    ui->oglMinefield->update();
+    ui->oglMinefield->repaint();
+
+    //reset time
+    m_timer->stop();
+    m_ResetTime = true;
+    ui->lblCurrentTime->setText("00:00.00");
+    ui->oglMinefield->setExternalTimer(m_timer);
+}
 
 CMines::CMines(QWidget *parent)
     : QMainWindow(parent)
@@ -71,10 +81,8 @@ CMines::CMines(QWidget *parent)
         setMinesSlider();
 
         ui->oglMinefield->generateMinefield(ui->sldrMines->value());
-        //repaint
-        ui->oglMinefield->update();
-        ui->oglMinefield->repaint();
 
+        resetGame();
     });
 
     ui->sldrMines->connect(ui->sldrMines,&QSlider::valueChanged,[this]()
@@ -82,9 +90,7 @@ CMines::CMines(QWidget *parent)
         ui->oglMinefield->generateMinefield(ui->sldrMines->value());
         ui->lblMines->setText(QString("Mines: %0").arg(ui->sldrMines->value()));
 
-        //repaint
-        ui->oglMinefield->update();
-        ui->oglMinefield->repaint();
+        resetGame();
     });
 
     ui->btnNormal->connect(ui->btnNormal, &QPushButton::clicked, [this](){
@@ -98,9 +104,8 @@ CMines::CMines(QWidget *parent)
     ui->btnReset->connect(ui->btnReset,&QPushButton::clicked,[this](){
         ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
         ui->oglMinefield->generateMinefield(ui->sldrMines->value());
-        //repaint
-        ui->oglMinefield->update();
-        ui->oglMinefield->repaint();
+
+        resetGame();
     });
 
     ui->btnChangeCellImage->connect(ui->btnChangeCellImage,&QPushButton::clicked,[this](){
@@ -118,6 +123,26 @@ CMines::CMines(QWidget *parent)
 
     ui->btnExit->connect(ui->btnExit, &QPushButton::clicked, qApp, &QCoreApplication::quit);
 
+    m_timer = new QTimer(this);
+    m_timer->setTimerType(Qt::PreciseTimer);
+    m_timer->setInterval(10);
+
+    connect(m_timer, &QTimer::timeout, [this](){
+        static QTime _time;
+        static QString displayTime = "";
+
+        if ( m_ResetTime ){
+            m_ResetTime = false;
+            _time.setHMS(0,0,0,0);
+        }
+
+        _time = _time.addMSecs(10);
+        displayTime = _time.toString("mm:ss.zzz").slice(0,8);
+        ui->lblCurrentTime->setText(displayTime);
+        ui->lblCurrentTime->update();
+    });
+
+    ui->oglMinefield->setExternalTimer(m_timer);
 
     bInitializing = false;
 }
@@ -139,9 +164,9 @@ void CMines::resizeEvent(QResizeEvent *event) {
 
     ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
     ui->oglMinefield->generateMinefield(ui->sldrMines->value());
+
+    resetGame();
 }
-
-
 
 CMines::~CMines()
 {

@@ -28,6 +28,11 @@ private:
     void setCellSizeSlider();
     void setMinesSlider();
 
+    void resetGame();
+
+    bool m_ResetTime = true;
+    QTimer *m_timer = nullptr;
+
     Ui::CMines *ui;
 };
 #endif // CMINES_H
