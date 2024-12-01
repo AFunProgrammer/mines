@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>302</width>
+    <width>312</width>
     <height>470</height>
    </rect>
   </property>
@@ -14,9 +14,8 @@
    <string>Mines</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normalon>:/Mine.32.png</normalon>
-   </iconset>
+   <iconset resource="mines.qrc">
+    <normaloff>:/mine</normaloff>:/mine</iconset>
   </property>
   <property name="iconSize">
    <size>
@@ -29,7 +28,7 @@
     <item row="0" column="0">
      <layout class="QGridLayout" name="glMines">
       <property name="sizeConstraint">
-       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+       <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item row="2" column="0" colspan="4">
        <layout class="QHBoxLayout" name="hlSettings">
@@ -48,7 +47,7 @@
            <string>Cell Size:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -95,7 +94,7 @@ QSlider::handle:horizontal {
            <number>16</number>
           </property>
           <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -111,7 +110,7 @@ QSlider::handle:horizontal {
            <string>Mines:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -155,7 +154,7 @@ QSlider::handle:horizontal {
            <number>5</number>
           </property>
           <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -337,26 +336,38 @@ QSlider::handle:horizontal {
            </font>
           </property>
           <property name="contextMenuPolicy">
-           <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
+           <enum>Qt::NoContextMenu</enum>
           </property>
           <property name="frameShape">
-           <enum>QFrame::Shape::NoFrame</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="text">
            <string>Time:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="lblCurrentTime">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
           </property>
           <property name="font">
            <font>
@@ -366,31 +377,31 @@ QSlider::handle:horizontal {
            </font>
           </property>
           <property name="contextMenuPolicy">
-           <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
+           <enum>Qt::NoContextMenu</enum>
           </property>
           <property name="autoFillBackground">
            <bool>true</bool>
           </property>
           <property name="frameShape">
-           <enum>QFrame::Shape::WinPanel</enum>
+           <enum>QFrame::WinPanel</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Shadow::Sunken</enum>
+           <enum>QFrame::Sunken</enum>
           </property>
           <property name="text">
            <string>00:00.00</string>
           </property>
           <property name="textFormat">
-           <enum>Qt::TextFormat::PlainText</enum>
+           <enum>Qt::PlainText</enum>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
           <property name="textInteractionFlags">
-           <set>Qt::TextInteractionFlag::NoTextInteraction</set>
+           <set>Qt::NoTextInteraction</set>
           </property>
          </widget>
         </item>

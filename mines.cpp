@@ -137,7 +137,8 @@ CMines::CMines(QWidget *parent)
         }
 
         _time = _time.addMSecs(10);
-        displayTime = _time.toString("mm:ss.zzz").slice(0,8);
+        displayTime = _time.toString("mm:ss.zzz");
+        displayTime.truncate(8);
         ui->lblCurrentTime->setText(displayTime);
         ui->lblCurrentTime->update();
     });

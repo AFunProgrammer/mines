@@ -1,7 +1,7 @@
 #include "minefield.h"
 
-#include <iostream>
 #include <QtMath>
+#include <QDir>
 
 QPointI offerNewCellSize(uint width, uint height, QPointI* OfferedSize);
 
@@ -253,21 +253,18 @@ QPixmap CMinefield::drawValues()
                 continue;
 
             //For Centering The Font
-            int charWidth = m_pFontMetrics->horizontalAdvance(QChar(m_Minefield[y][x].m_Value));
-            //QRect fontRect = QRect(InsideRect.left() + InsideRect.width()/2 - charWidth/2,
-            //                       InsideRect.top(),
-            //                       charWidth,
-            //                       InsideRect.height());
-            QRect fontRect = QRect(valueArea.left() + valueArea.width()/2 - charWidth/2,
-                                   valueArea.top(),
-                                   charWidth,
-                                   valueArea.height());
+            //int charWidth = m_pFontMetrics->horizontalAdvance(QChar(m_Minefield[y][x].m_Value));
+            QRect bounds = m_pFontMetrics->boundingRect(m_Minefield[y][x].m_Value);
+            QPixmap letter = QPixmap(bounds.size());
+            letter.fill(Qt::transparent);
 
-            value.fill(Qt::transparent);
+            QPainter paintLetter(&letter);
+            paintLetter.setFont(m_CellFont);
 
-            QPainter paintValue(&value);
-            paintValue.fillRect(clientArea,Qt::transparent);
-            paintValue.setFont(m_CellFont);
+            //value.fill(Qt::transparent);
+
+            //QPainter paintValue(&value);
+            //paintValue.fillRect(clientArea,Qt::transparent);
 
             switch(static_cast<int>(m_Minefield[y][x].m_Value))
             {
@@ -302,12 +299,33 @@ QPixmap CMinefield::drawValues()
                 continue;
             }
 
-            paintValue.setPen(fontColor);
-            paintValue.setBrush(fontColor);
-            paintValue.drawText(fontRect, QString(m_Minefield[y][x].m_Value));
-            paintValue.end();
+            int startX = (bounds.left() > 0 ? -(bounds.left()) : bounds.left() );
+            int startY = (bounds.bottom() < 0 ? bounds.height() - bounds.bottom() : bounds.height() );
 
-            paintCells.drawPixmap(InsideRect,value);
+            paintLetter.setPen(fontColor);
+            paintLetter.setBrush(fontColor);
+            paintLetter.drawText(startX,startY,QString(m_Minefield[y][x].m_Value));
+            paintLetter.end();
+
+            QString currentDirectory = QDir::currentPath();
+            QString fileName = currentDirectory + QString("/%0%1%2.png").arg(x).arg(y).arg(m_Minefield[y][x].m_Value);
+            //qDebug() << "Saving: " << fileName << " returned: " << letter.save(fileName);
+            QSize useScale = QSizeF(InsideRect.size().toSizeF() * .8f ).toSize();
+            QPixmap scaledLetter = letter.scaledToHeight((int)((float)useScale.height()*0.8f),Qt::SmoothTransformation);
+
+            //qDebug() << "Saving: " << fileName << " returned: " << scaledLetter.save(fileName);
+
+            startX = (int)((float)InsideRect.left() + (float)InsideRect.width()/2.0f - (float)scaledLetter.width()/2.0f);
+            startY = (int)((float)InsideRect.top() + (float)InsideRect.height()/2.0f - (float)scaledLetter.height()/2.0f);
+
+            if ( m_Minefield[y][x].m_Value == '3' ){
+                qDebug() << "Found a 3";
+            }
+
+            //paintValue.drawPixmap(InsideRect,letter);
+            //paintValue.end();
+
+            paintCells.drawPixmap(startX,startY,scaledLetter);
         }
     }
 
@@ -388,13 +406,11 @@ void CMinefield::setCellSize(uint CellSize)
     m_ExtraSpace = QPointI(width % CellSize, height % CellSize);
 
     m_CellSize = cellSize;
-    uint uiSize = fmin(cellSize[0],cellSize[1]);
-    uint uiPtSize = static_cast<uint>((static_cast<float>(uiSize) / 96.0f)*72.0f);
-    m_CellFont = QFont("SansSerif", uiPtSize, QFont::Bold, false);
 
-    if ( m_pFontMetrics != nullptr )
+    m_CellFont = QFont("SansSerif", 128, QFont::Bold, false);
+    if ( m_pFontMetrics != nullptr ){
         delete m_pFontMetrics;
-
+    }
     m_pFontMetrics = new QFontMetrics(m_CellFont);
 
     m_HoverCell = QPointI(-1,-1);
