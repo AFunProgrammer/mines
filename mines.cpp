@@ -121,7 +121,7 @@ CMines::CMines(QWidget *parent)
         ui->oglMinefield->repaint();
     });
 
-    ui->btnExit->connect(ui->btnExit, &QPushButton::clicked, qApp, &QCoreApplication::quit);
+    ui->btnClose->connect(ui->btnClose, &QPushButton::clicked, qApp, &QCoreApplication::quit);
 
     m_timer = new QTimer(this);
     m_timer->setTimerType(Qt::PreciseTimer);
