@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>312</width>
-    <height>470</height>
+    <height>494</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -46,6 +46,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
           <property name="text">
            <string>Cell Size:</string>
           </property>
@@ -59,7 +65,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>20</height>
+            <height>30</height>
            </size>
           </property>
           <property name="baseSize">
@@ -109,6 +115,12 @@ QSlider::handle:horizontal {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
           <property name="text">
            <string>Mines:</string>
           </property>
@@ -122,7 +134,7 @@ QSlider::handle:horizontal {
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>20</height>
+            <height>30</height>
            </size>
           </property>
           <property name="baseSize">
@@ -362,7 +374,7 @@ QSlider::handle:horizontal {
           </property>
           <property name="minimumSize">
            <size>
-            <width>100</width>
+            <width>120</width>
             <height>0</height>
            </size>
           </property>
@@ -401,7 +413,7 @@ QSlider::handle:horizontal {
            <bool>false</bool>
           </property>
           <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="textInteractionFlags">
            <set>Qt::NoTextInteraction</set>
