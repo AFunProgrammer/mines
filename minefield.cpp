@@ -201,7 +201,7 @@ QPixmap CMinefield::drawPushedBox()
 
 QPixmap CMinefield::drawFlag()
 {
-    QPixmap flag = QPixmap(":/Flag.png");
+    QPixmap flag = QPixmap(":/flag.png");
     QPointI flagSize = QPointI(flag.width(), flag.height());
     uint uiSize = fmin(m_CellSize[0],m_CellSize[1]);
 

@@ -1,16 +1,17 @@
 <RCC>
     <qresource prefix="/">
-        <file>Mine.16.png</file>
-        <file>Mine.32.png</file>
-        <file alias="mine">Mine.64.png</file>
-        <file>Flag.png</file>
-        <file alias="flag">flag_64.png</file>
-        <file>Flag_300.png</file>
-        <file alias="mouse">mouse_64.png</file>
-        <file alias="drydirt">drydirt.png</file>
-        <file alias="drymud">drymud.png</file>
-        <file alias="redclay">redclay.png</file>
-        <file alias="rocks">rocks.png</file>
-        <file alias="rockydirt">rockydirt.png</file>
+        <file alias="rockydirt">assets/rockydirt.png</file>
+        <file alias="rocks">assets/rocks.png</file>
+        <file alias="redclay">assets/redclay.png</file>
+        <file alias="mouse">assets/mouse_64.png</file>
+        <file alias="flag">assets/flag_64.png</file>
+        <file alias="drymud">assets/drymud.png</file>
+        <file alias="drydirt">assets/drydirt.png</file>
+        <file>assets/flag_300.png</file>
+        <file>assets/mines.ico</file>
+        <file alias="mine">assets/mine.64.png</file>
+        <file>assets/mine.32.png</file>
+        <file>assets/mine.16.png</file>
+        <file>assets/flag.png</file>
     </qresource>
 </RCC>

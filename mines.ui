@@ -6,9 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>312</width>
-    <height>494</height>
+    <width>380</width>
+    <height>531</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Comic Sans MS</family>
+    <pointsize>20</pointsize>
+    <bold>true</bold>
+   </font>
   </property>
   <property name="contextMenuPolicy">
    <enum>Qt::NoContextMenu</enum>
@@ -197,6 +204,9 @@ QSlider::handle:horizontal {
           <property name="text">
            <string>Reset</string>
           </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -214,7 +224,10 @@ QSlider::handle:horizontal {
            </size>
           </property>
           <property name="text">
-           <string>Change Cell Image</string>
+           <string>Change Image</string>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -228,6 +241,9 @@ QSlider::handle:horizontal {
           </property>
           <property name="text">
            <string>Close</string>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -347,7 +363,9 @@ QSlider::handle:horizontal {
           </property>
           <property name="font">
            <font>
-            <pointsize>16</pointsize>
+            <family>Comic Sans MS</family>
+            <pointsize>20</pointsize>
+            <bold>true</bold>
            </font>
           </property>
           <property name="contextMenuPolicy">
@@ -387,7 +405,7 @@ QSlider::handle:horizontal {
           <property name="font">
            <font>
             <family>Ubuntu</family>
-            <pointsize>16</pointsize>
+            <pointsize>20</pointsize>
             <bold>true</bold>
            </font>
           </property>
