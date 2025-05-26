@@ -2,6 +2,7 @@
 #define CMINEFIELD_H
 
 #pragma once
+#include <QElapsedTimer>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QtSvg/QtSvg>
@@ -53,6 +54,7 @@ private:
     int  m_iCellCount = 0;
 
     QTimer* m_pTimer = nullptr;
+    QElapsedTimer m_gameTime;
 
     QPointI m_HoverCell = QPointI(-1,-1);
     QPointI m_HitBox = QPointI(-1,-1);
@@ -93,6 +95,8 @@ public:
     uint getCellSize();
     void setCellSize(uint CellSize);
     uint getCellCount(bool bUseCurrent=true, uint Size = 32);
+
+    qint64 getGameTime();
 
     void setClickType(ClickType Type);
     void setClearColor(QColor Color);

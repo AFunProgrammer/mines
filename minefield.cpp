@@ -318,9 +318,11 @@ QPixmap CMinefield::drawValues()
             startX = (int)((float)InsideRect.left() + (float)InsideRect.width()/2.0f - (float)scaledLetter.width()/2.0f);
             startY = (int)((float)InsideRect.top() + (float)InsideRect.height()/2.0f - (float)scaledLetter.height()/2.0f);
 
-            if ( m_Minefield[y][x].m_Value == '3' ){
-                qDebug() << "Found a 3";
-            }
+            // I don't remember what I was debugging but looks like
+            //  it must have been missing a value at sometime
+            //if ( m_Minefield[y][x].m_Value == '3' ){
+            //    qDebug() << "Found a 3";
+            //}
 
             //paintValue.drawPixmap(InsideRect,letter);
             //paintValue.end();
@@ -389,6 +391,12 @@ uint CMinefield::getCellCount(bool bUseCurrent,uint Size){
     int cells = geometry().width() / Size + geometry().height() / Size;
 
     return cells;
+}
+
+
+qint64 CMinefield::getGameTime()
+{
+    return m_gameTime.elapsed();
 }
 
 void CMinefield::setCellSize(uint CellSize)
@@ -559,6 +567,7 @@ void CMinefield::checkForHitEmptyAndUpdate()
         m_GameState = GameState::Playing;
         if ( m_pTimer ){
             m_pTimer->start();
+            m_gameTime.restart();
         }
     }
 

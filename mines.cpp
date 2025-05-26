@@ -25,20 +25,45 @@ QVector<QString> g_CellImages = {
 };
 
 void CMines::setCellSizeSlider(){
+    //preserve current size setting
+    //int cellSize = m_vecMineSizes[ui->sldrCellSize->value()];
+
     QSize fieldSize = ui->oglMinefield->geometry().size();
-    int maxCellSize = qMin(fieldSize.width()/3,fieldSize.height()/3);
+    int maxCellSize = qMin(fieldSize.width()/2,fieldSize.height()/2);
 
-    int sldrCellSize = ui->sldrCellSize->value();
 
-    ui->sldrCellSize->setMinimum(40);
-    ui->sldrCellSize->setMaximum(maxCellSize);
-    ui->sldrCellSize->setSingleStep(maxCellSize/6);
-    ui->sldrCellSize->setPageStep(maxCellSize/3);
-    ui->sldrCellSize->setValue(sldrCellSize);
+    m_vecMineSizes.clear();
+    qDebug() << "----- Setting up new mine sizes -----";
+
+    // need a list of square mine sizes to use
+    for ( int iSize = 32; iSize < maxCellSize; iSize++ )
+    {
+        if ( (fieldSize.height() % iSize > 19) || (fieldSize.width() % iSize > 19) )
+            continue;
+
+        if ( m_vecMineSizes.size() > 0 && iSize < (m_vecMineSizes.constLast() + 8) )
+            continue;
+
+        qDebug() << QString("Inserting mine size: %0\n").arg(iSize) << QString("height r: %0, width r: %1").arg(fieldSize.height() % iSize).arg(fieldSize.width() % iSize);
+        m_vecMineSizes.append(iSize);
+    }
+
+    if ( m_vecMineSizes.size() == 0 )
+        m_vecMineSizes.append(40); // set a default size to always have at least one
+
+    ui->sldrCellSize->setMinimum(0);
+    ui->sldrCellSize->setMaximum(m_vecMineSizes.size()-1);
+    ui->sldrCellSize->setSingleStep(1);
+    ui->sldrCellSize->setPageStep(m_vecMineSizes.size()/2);
+    ui->sldrCellSize->setValue(0);
+
+    //set the new mine size
+    ui->oglMinefield->setCellSize(m_vecMineSizes[0]);
 }
 
 void CMines::setMinesSlider(){
-    int maxMines = ui->oglMinefield->getCellCount(false,ui->sldrCellSize->value()) - 2;
+    int mineSize = m_vecMineSizes[ui->sldrCellSize->value()];
+    int maxMines = ui->oglMinefield->getCellCount(false,mineSize) - 2;
 
     int sldrMines = ui->sldrMines->value();
 
@@ -59,11 +84,9 @@ void CMines::setSliderSteps(){
 void CMines::resetGame(){
     //repaint
     ui->oglMinefield->update();
-    ui->oglMinefield->repaint();
 
     //reset time
     m_timer->stop();
-    m_ResetTime = true;
     ui->lblCurrentTime->setText("00:00.00");
     ui->oglMinefield->setExternalTimer(m_timer);
 }
@@ -76,7 +99,9 @@ CMines::CMines(QWidget *parent)
 
     ui->sldrCellSize->connect(ui->sldrCellSize,&QSlider::valueChanged,[this]()
     {
-        ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
+        int mineSize = m_vecMineSizes[ui->sldrCellSize->value()];
+        qDebug() << QString("New Mine Size Is: %0 - slider value: %1").arg(mineSize).arg(ui->sldrCellSize->value());
+        ui->oglMinefield->setCellSize(mineSize);
 
         setMinesSlider();
 
@@ -128,18 +153,15 @@ CMines::CMines(QWidget *parent)
     m_timer->setInterval(10);
 
     connect(m_timer, &QTimer::timeout, [this](){
-        static QTime _time;
-        static QString displayTime = "";
+        qint64 elapsedMs = ui->oglMinefield->getGameTime(); // Get elapsed time from QElapsedTimer
 
-        if ( m_ResetTime ){
-            m_ResetTime = false;
-            _time.setHMS(0,0,0,0);
-        }
+        QTime time(0, 0, 0, 0); // Start from zero
+        time = time.addMSecs(elapsedMs); // Convert elapsed time into QTime format
 
-        _time = _time.addMSecs(10);
-        displayTime = _time.toString("mm:ss.zzz");
-        displayTime.truncate(8);
-        ui->lblCurrentTime->setText(displayTime);
+        QString formattedTime = time.toString("mm:ss.zzz");
+        formattedTime.truncate(8); // Ensure MM:SS:hh format
+
+        ui->lblCurrentTime->setText(formattedTime);
         ui->lblCurrentTime->update();
     });
 
@@ -148,26 +170,17 @@ CMines::CMines(QWidget *parent)
     bInitializing = false;
 }
 
-void CMines::showEvent(QShowEvent *event) {
-    setSliderSteps();
-
-    ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
-    ui->oglMinefield->generateMinefield(ui->sldrMines->value());
-    //    connect(screen(),&QScreen::orientationChanged,this,&CMines::orientationChanged);
-
-    QWidget::showEvent(event);
-}
-
 void CMines::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
 
-    setSliderSteps();
-
-    ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
-    ui->oglMinefield->generateMinefield(ui->sldrMines->value());
-
-    resetGame();
+    QTimer::singleShot(100, [this](){
+        setSliderSteps();
+        ui->oglMinefield->setCellSize(ui->sldrCellSize->value());
+        ui->oglMinefield->generateMinefield(ui->sldrMines->value());
+        resetGame();
+    });
 }
+
 
 CMines::~CMines()
 {

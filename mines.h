@@ -20,7 +20,6 @@ public:
     ~CMines();
 
 protected:
-    void showEvent(QShowEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
 private:
@@ -30,7 +29,11 @@ private:
 
     void resetGame();
 
-    bool m_ResetTime = true;
+    // need a list of square mine sizes to use
+    QVector<int> m_vecMineSizes = QVector<int>({40});
+
+    // need to wait for ui to size itself first
+    bool m_uiLoaded = false;
     QTimer *m_timer = nullptr;
 
     Ui::CMines *ui;
