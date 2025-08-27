@@ -16,7 +16,6 @@ qt_add_executable(mines WIN32 MACOSX_BUNDLE
     mines.cpp mines.h mines.ui
     utility.h
     mines.qrc
-    android/AndroidManifest.xml android/build.gradle android/res/values/libs.xml android/gradle/wrapper/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.properties android/gradle.properties android/gradlew android/gradlew.bat
     MANUAL_FINALIZATION
     android/AndroidManifest.xml android/build.gradle android/res/values/libs.xml android/gradle/wrapper/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.properties android/gradle.properties android/gradlew android/gradlew.bat
 )
@@ -38,11 +37,11 @@ if(ANDROID)
 
     # QT_ANDROID_MIN_SDK_VERSION:
     # Set to recommended minimum for Qt 6.5.3. (26 is actually but trying 24)
-    set_property(TARGET mines PROPERTY QT_ANDROID_MIN_SDK_VERSION 24)
+    set_property(TARGET mines PROPERTY QT_ANDROID_MIN_SDK_VERSION 25)
 
     # QT_ANDROID_TARGET_SDK_VERSION:
     # Set to current recommended target.
-    set_property(TARGET mines PROPERTY QT_ANDROID_TARGET_SDK_VERSION 34)
+    set_property(TARGET mines PROPERTY QT_ANDROID_TARGET_SDK_VERSION 35)
 
     # Manually finalize the executable for Android deployment.
     # This pairs with MANUAL_FINALIZATION in qt_add_executable.

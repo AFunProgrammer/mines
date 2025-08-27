@@ -487,7 +487,7 @@
    </font>
   </property>
   <property name="contextMenuPolicy">
-   <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
+   <enum>Qt::NoContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>Mines</string>
@@ -505,9 +505,25 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0">
      <layout class="QGridLayout" name="glMines">
       <property name="sizeConstraint">
-       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+       <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item row="2" column="0" colspan="4">
        <layout class="QHBoxLayout" name="hlSettings">
@@ -532,7 +548,7 @@
            <string>Cell Size:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -582,7 +598,7 @@ QSlider::handle:horizontal {
            <number>0</number>
           </property>
           <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -604,7 +620,7 @@ QSlider::handle:horizontal {
            <string>Mines:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -648,7 +664,7 @@ QSlider::handle:horizontal {
            <number>5</number>
           </property>
           <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -841,16 +857,16 @@ QSlider::handle:horizontal {
            </font>
           </property>
           <property name="contextMenuPolicy">
-           <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
+           <enum>Qt::NoContextMenu</enum>
           </property>
           <property name="frameShape">
-           <enum>QFrame::Shape::NoFrame</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="text">
            <string>Time:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -882,37 +898,53 @@ QSlider::handle:horizontal {
            </font>
           </property>
           <property name="contextMenuPolicy">
-           <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
+           <enum>Qt::NoContextMenu</enum>
           </property>
           <property name="autoFillBackground">
            <bool>true</bool>
           </property>
           <property name="frameShape">
-           <enum>QFrame::Shape::NoFrame</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Shadow::Plain</enum>
+           <enum>QFrame::Plain</enum>
           </property>
           <property name="text">
            <string>00:00.00</string>
           </property>
           <property name="textFormat">
-           <enum>Qt::TextFormat::PlainText</enum>
+           <enum>Qt::PlainText</enum>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
           </property>
           <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignCenter</set>
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="textInteractionFlags">
-           <set>Qt::TextInteractionFlag::NoTextInteraction</set>
+           <set>Qt::NoTextInteraction</set>
           </property>
          </widget>
         </item>
        </layout>
       </item>
      </layout>
+    </item>
+    <item row="2" column="0">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>45</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>
