@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.inspiringfamily.mines" android:installLocation="auto" android:versionCode="5" android:versionName="Beta 5">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.inspiringfamily.mines" android:installLocation="auto" android:versionCode="16" android:versionName="Beta 16">
     <!-- %%INSERT_PERMISSIONS -->
     <!-- %%INSERT_FEATURES -->
+    <uses-sdk android:minSdkVersion="24" android:maxSdkVersion="35"/>
     <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:smallScreens="true"/>
     <application android:name="org.qtproject.qt.android.bindings.QtApplication" android:hardwareAccelerated="true" android:label="mines" android:requestLegacyExternalStorage="true" android:allowNativeHeapPointerTagging="false" android:allowBackup="true" android:fullBackupOnly="false" android:icon="@drawable/icon">
         <activity android:name="org.qtproject.qt.android.bindings.QtActivity" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:label="mines" android:launchMode="singleTop" android:screenOrientation="unspecified" android:exported="true" android:theme="@style/splashScreenTheme">
@@ -17,5 +18,4 @@
             <meta-data android:name="android.app.splash_screen_drawable_landscape" android:resource="@drawable/splashscreen_land"/>
         </activity>
     </application>
-<uses-sdk android:minSdkVersion="28"/>
 </manifest>
