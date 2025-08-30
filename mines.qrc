@@ -8,10 +8,11 @@
         <file alias="drymud">assets/drymud.png</file>
         <file alias="drydirt">assets/drydirt.png</file>
         <file>assets/flag_300.png</file>
-        <file>assets/mines.ico</file>
+        <file alias="mines.ico">assets/mines.ico</file>
         <file alias="mine">assets/mine.64.png</file>
         <file>assets/mine.32.png</file>
         <file>assets/mine.16.png</file>
         <file>assets/flag.png</file>
+        <file alias="mines.png">assets/mines.png</file>
     </qresource>
 </RCC>

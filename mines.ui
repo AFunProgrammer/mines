@@ -494,7 +494,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="mines.qrc">
-    <normaloff>:/mine</normaloff>:/mine</iconset>
+    <normaloff>:/mines.ico</normaloff>:/mines.ico</iconset>
   </property>
   <property name="iconSize">
    <size>
