@@ -49,6 +49,23 @@ if(ANDROID)
 endif()
 # --- End Android-specific Configuration ---
 
+# --- macOS-specific configuration ---
+if(APPLE)
+    set_target_properties(mines PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "Mines"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.inspiringfamily.mines"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+        MACOSX_BUNDLE_INFO_STRING "Mines Game"
+        MACOSX_BUNDLE_ICON_FILE "mines.icns"   # <--- Important line
+    )
+
+    set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/mines.icns")
+    set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    target_sources(mines PRIVATE ${APP_ICON})
+endif()
+# --- end macOS-specific ---
+
 # Install only on non-Android platforms
 if(NOT ANDROID)
     install(TARGETS mines
